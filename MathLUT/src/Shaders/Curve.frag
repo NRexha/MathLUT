@@ -7,6 +7,7 @@ uniform vec2 uCenter;
 uniform float uPixelsPerUnit;
 uniform vec4 uVisibleChannels;
 uniform sampler1D uSamples;
+uniform vec2 uViewportOrigin;
 
 float Line(float distancePx, float halfWidth)
 {
@@ -16,7 +17,8 @@ float Line(float distancePx, float halfWidth)
 
 void main()
 {
-    vec2 graph = uCenter + (gl_FragCoord.xy - uViewport * 0.5) / uPixelsPerUnit;
+    vec2 localPosition = gl_FragCoord.xy - uViewportOrigin;
+    vec2 graph = uCenter + (localPosition - uViewport * 0.5) / uPixelsPerUnit;
     float x = graph.x;
     float y = graph.y;
     float inDomain = step(0.0, x) * step(x, 1.0);

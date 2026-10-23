@@ -13,88 +13,170 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\External">
+      <UniqueIdentifier>{837d1e45-e048-4d92-bd4c-c45021b88eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{63446d68-d9aa-4df0-92cd-c4ceff8df6bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Functions">
+      <UniqueIdentifier>{3aee5987-2cdc-4219-bd6b-f7b63a63b11c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graph">
+      <UniqueIdentifier>{57dc964c-4126-48ba-84c7-71371b7cc2cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Language">
+      <UniqueIdentifier>{2c2f5f14-a888-40e2-a761-49456bc34f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LUT">
+      <UniqueIdentifier>{b829ea9c-4257-4df2-86c8-cf5654eedf18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{35db965a-ecaf-4650-aaf4-b624663317b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{adc2cc9e-9a29-4566-bb43-13c161252a4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graph">
+      <UniqueIdentifier>{f5ea12b8-c8b9-45dc-8d7d-5771b05a21c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Language">
+      <UniqueIdentifier>{7062b282-1ee7-4e5b-9ea8-4d275d0a437c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LUT">
+      <UniqueIdentifier>{71aea6cf-9fd3-477b-ba60-c358fc177a51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{bc54ea83-1ce3-470f-b850-1fa4f7ba9210}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{a20588de-9362-4c06-9ece-45cb07fca92d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\External</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Shader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\Dependencies\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\External</Filter>
     </ClCompile>
-    <ClCompile Include="src\LUT\LUTGenerator.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\Dependencies\imgui\imgui_tables.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\imgui\imgui_draw.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\imgui\imgui.cpp">
+      <Filter>Source Files\External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImGuiColorTextEdit\TextEditor.cpp">
+      <Filter>Source Files\External</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\ShaderSource.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Language\FunctionParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Language\GLSLGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graph\GraphView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graph\GraphRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graph\GridRenderer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Core\Shader.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Graph\CurveRenderer.cpp">
+      <Filter>Source Files\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graph\GraphRenderer.cpp">
+      <Filter>Source Files\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graph\GraphView.cpp">
+      <Filter>Source Files\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graph\GridRenderer.cpp">
+      <Filter>Source Files\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Language\FunctionParser.cpp">
+      <Filter>Source Files\Language</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Language\GLSLGenerator.cpp">
+      <Filter>Source Files\Language</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LUT\LUTGenerator.cpp">
+      <Filter>Source Files\LUT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\FunctionEditorPanel.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LUT\LUTGenerator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\ShaderSource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Language\FunctionParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Language\GLSLGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graph\GraphView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graph\GraphRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graph\GraphState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LUT\LUTSample.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graph\GraphTransform.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Graph\GridRenderer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graph</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graph\CurveRenderer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Graph\GraphView.h">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graph\GraphTransform.h">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graph\GraphState.h">
+      <Filter>Header Files\Graph</Filter>
     </ClInclude>
     <ClInclude Include="src\Graph\GraphShader.h">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graph\GraphRenderer.h">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graph\CurveRenderer.h">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Language\FunctionParser.h">
+      <Filter>Header Files\Language</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Language\GLSLGenerator.h">
+      <Filter>Header Files\Language</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LUT\LUTGenerator.h">
+      <Filter>Header Files\LUT</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LUT\LUTSample.h">
+      <Filter>Header Files\LUT</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\FunctionEditorPanel.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Shaders\TestCompute.comp" />
-    <None Include="src\Shaders\Graph.vert" />
-    <None Include="src\Shaders\Grid.frag" />
-    <None Include="src\Shaders\Curve.frag" />
-    <None Include="src\Functions\TestFunction.mlut" />
+    <None Include="src\Functions\TestFunction.mlut">
+      <Filter>Source Files\Functions</Filter>
+    </None>
+    <None Include="src\Shaders\Curve.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\Graph.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\Grid.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="src\Shaders\TestCompute.comp">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

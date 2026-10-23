@@ -15,11 +15,15 @@ class GraphView
 public:
     bool Initialize(GLFWwindow* window);
     void Update();
-    void Render();
+    void Render(int x, int y, int width, int height);
     void Shutdown();
     void SetSamples(const std::vector<LUTSample>& samples);
 
     const GraphState& GetState() const { return state; }
+    int viewportX = 0;
+    int viewportY = 0;
+    int viewportWidth = 0;
+    int viewportHeight = 0;
 
 private:
     static void ScrollCallback(GLFWwindow* window, double xOffset, double yOffset);
@@ -30,4 +34,5 @@ private:
     bool panning = false;
     double lastMouseX = 0.0;
     double lastMouseY = 0.0;
+
 };

@@ -1,105 +1,181 @@
 #include <glad/glad.h>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include "Application.h"
 
-#include "LUT/LUTGenerator.h"
-#include "Graph/GraphView.h"
-#include "LUT/LUTSample.h"
-#include "Core/ShaderSource.h"
-
-#include <vector>
+#include <algorithm>
 #include <iostream>
 
-int main()
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
+int Application::Run()
 {
-#pragma region InitGLFW
+    if (!Initialize())
+    {
+        Shutdown();
+        return -1;
+    }
+
+    RunLoop();
+    Shutdown();
+    return 0;
+}
+
+bool Application::Initialize()
+{
+    if (!InitializeWindow())
+        return false;
+
+    if (!graphView.Initialize(window))
+    {
+        std::cerr << "Failed to initialize graph view.\n";
+        return false;
+    }
+
+    graphInitialized = true;
+
+    if (!InitializeImGui())
+        return false;
+
+    glfwSwapInterval(1);
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << '\n';
+
+    if (!functionEditorPanel.Initialize(lutGenerator, graphView))
+        return false;
+
+    return true;
+}
+
+bool Application::InitializeWindow()
+{
     if (!glfwInit())
     {
         std::cerr << "Failed to initialize GLFW.\n";
-        return -1;
+        return false;
     }
+
+    glfwInitialized = true;
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "MathLUT", nullptr, nullptr);
+    window = glfwCreateWindow(1280, 720, "MathLUT", nullptr, nullptr);
 
     if (!window)
     {
         std::cerr << "Failed to create GLFW window.\n";
-        glfwTerminate();
-        return -1;
+        return false;
     }
 
     glfwMakeContextCurrent(window);
-#pragma endregion
 
-#pragma region InitGLAD
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         std::cerr << "Failed to initialize GLAD.\n";
-
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return -1;
+        return false;
     }
-#pragma endregion
 
-#pragma region GraphView
-    GraphView graphView;
+    return true;
+}
 
-    if (!graphView.Initialize(window))
+bool Application::InitializeImGui()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    imguiContextCreated = true;
+
+    ImGui::GetIO().FontGlobalScale = 1.25f;
+    ImGui::StyleColorsDark();
+
+    if (!ImGui_ImplGlfw_InitForOpenGL(window, true))
     {
-        std::cerr << "Failed to initialize graph view.\n";
-        glfwTerminate();
-        return -1;
+        std::cerr << "Failed to initialize ImGui GLFW backend.\n";
+        return false;
     }
-#pragma endregion
 
-#pragma region WindowSettings
-    glfwSwapInterval(1); //enable VSync
-    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << '\n';
-#pragma endregion
+    imguiGlfwInitialized = true;
 
-#pragma region LUT
-    LUTGenerator lutGenerator;
-
-    std::string functionSource;
-
-    if (!ShaderSource::LoadFromFile("src/Functions/TestFunction.mlut", functionSource))
+    if (!ImGui_ImplOpenGL3_Init("#version 430"))
     {
-        std::cerr << "Failed to load test function.\n";
-        return -1;
+        std::cerr << "Failed to initialize ImGui OpenGL backend.\n";
+        return false;
     }
 
-    std::vector<LUTSample> samples;
+    imguiOpenGLInitialized = true;
+    return true;
+}
 
-    if (lutGenerator.GenerateSamples(functionSource, samples))
-        graphView.SetSamples(samples);
-
-    if (!lutGenerator.RunComputeTest(functionSource))
-    {
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return -1;
-    }
-#pragma endregion
-
-    //render loop
+void Application::RunLoop()
+{
     while (!glfwWindowShouldClose(window))
     {
+        glfwPollEvents();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        int windowWidth, windowHeight;
+        int framebufferWidth, framebufferHeight;
+
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+
+        float panelWidth = std::clamp(windowWidth * 0.35f, 350.0f, 600.0f);
+        int graphX = windowWidth > 0 ? static_cast<int>(panelWidth * framebufferWidth / windowWidth) : 0;
+        int graphWidth = framebufferWidth - graphX;
+
+        glViewport(0, 0, framebufferWidth, framebufferHeight);
         glClearColor(0.12f, 0.13f, 0.16f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glfwPollEvents();
+        RenderUI();
+
         graphView.Update();
-        graphView.Render();
+        graphView.Render(graphX, 0, graphWidth, framebufferHeight);
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window);
     }
+}
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+void Application::RenderUI()
+{
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-    return 0;
+    float panelWidth = std::clamp(windowWidth * 0.35f, 350.0f, 600.0f);
+
+    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, static_cast<float>(windowHeight)), ImGuiCond_Always);
+
+    functionEditorPanel.Render(panelWidth, static_cast<float>(windowHeight));
+}
+
+
+void Application::Shutdown()
+{
+    if (imguiOpenGLInitialized)
+        ImGui_ImplOpenGL3_Shutdown();
+
+    if (imguiGlfwInitialized)
+        ImGui_ImplGlfw_Shutdown();
+
+    if (imguiContextCreated)
+        ImGui::DestroyContext();
+
+    if (graphInitialized)
+        graphView.Shutdown();
+
+    if (window)
+    {
+        glfwDestroyWindow(window);
+        window = nullptr;
+    }
+
+    if (glfwInitialized)
+        glfwTerminate();
 }

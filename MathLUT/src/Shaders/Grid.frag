@@ -6,6 +6,7 @@ uniform vec2 uViewport;
 uniform vec2 uCenter;
 uniform float uPixelsPerUnit;
 uniform float uGridStep;
+uniform vec2 uViewportOrigin;
 
 float GridLine(float value, float stepSize)
 {
@@ -22,7 +23,8 @@ float Line(float distancePx, float halfWidth)
 
 void main()
 {
-    vec2 graph = uCenter + (gl_FragCoord.xy - uViewport * 0.5) / uPixelsPerUnit;
+    vec2 localPosition = gl_FragCoord.xy - uViewportOrigin;
+    vec2 graph = uCenter + (localPosition - uViewport * 0.5) / uPixelsPerUnit;
     vec3 color = vec3(0.075, 0.082, 0.095);
 
     float minorGrid = max(GridLine(graph.x, uGridStep), GridLine(graph.y, uGridStep));

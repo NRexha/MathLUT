@@ -16,7 +16,7 @@ public:
     GraphRenderer& operator=(const GraphRenderer&) = delete;
 
     bool Initialize();
-    void Render(const GraphState& state, int width, int height);
+    void Render(const GraphState& state, int x, int y, int width, int height);
     void Shutdown();
     void SetSamples(const std::vector<LUTSample>& samples);
 

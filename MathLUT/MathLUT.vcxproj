@@ -111,7 +111,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\ImGuiColorTextEdit</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +132,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\ImGuiColorTextEdit</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,6 +146,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
+    <ClCompile Include="..\Dependencies\ImGuiColorTextEdit\TextEditor.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Core\Shader.cpp" />
     <ClCompile Include="src\Core\ShaderSource.cpp" />
@@ -156,8 +163,11 @@
     <ClCompile Include="src\Language\FunctionParser.cpp" />
     <ClCompile Include="src\Language\GLSLGenerator.cpp" />
     <ClCompile Include="src\LUT\LUTGenerator.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\UI\FunctionEditorPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Core\Shader.h" />
     <ClInclude Include="src\Core\ShaderSource.h" />
     <ClInclude Include="src\Graph\CurveRenderer.h" />
@@ -171,6 +181,7 @@
     <ClInclude Include="src\Language\GLSLGenerator.h" />
     <ClInclude Include="src\LUT\LUTGenerator.h" />
     <ClInclude Include="src\LUT\LUTSample.h" />
+    <ClInclude Include="src\UI\FunctionEditorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Functions\TestFunction.mlut" />

@@ -9,7 +9,7 @@ class CurveRenderer
 {
 public:
     bool Initialize();
-    void Render(const GraphState& state, int width, int height);
+    void Render(const GraphState& state, int x, int y, int width, int height);
     void SetSamples(const std::vector<LUTSample>& samples);
     void Shutdown();
 
@@ -22,4 +22,5 @@ private:
     GLint zoomLocation = -1;
     GLint channelsLocation = -1;
     GLint samplesLocation = -1;
+    GLint viewportOriginLocation = -1;
 };

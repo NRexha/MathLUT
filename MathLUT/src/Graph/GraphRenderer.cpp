@@ -19,10 +19,10 @@ bool GraphRenderer::Initialize()
     return true;
 }
 
-void GraphRenderer::Render(const GraphState& state, int width, int height)
+void GraphRenderer::Render(const GraphState& state, int x, int y, int width, int height)
 {
-    gridRenderer.Render(state, width, height);
-    curveRenderer.Render(state, width, height);
+    gridRenderer.Render(state, x, y, width, height);
+    curveRenderer.Render(state, x, y, width, height);
 }
 
 void GraphRenderer::SetSamples(const std::vector<LUTSample>& samples)

@@ -7,7 +7,7 @@ class GridRenderer
 {
 public:
     bool Initialize();
-    void Render(const GraphState& state, int width, int height);
+    void Render(const GraphState& state, int x, int y, int width, int height);
     void Shutdown();
 
 private:
@@ -17,4 +17,5 @@ private:
     GLint centerLocation = -1;
     GLint zoomLocation = -1;
     GLint gridStepLocation = -1;
+    GLint viewportOriginLocation = -1;
 };
