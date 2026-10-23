@@ -1,0 +1,26 @@
+#version 430 core
+
+layout(local_size_x = 1) in;
+
+layout(std430, binding = 0) buffer OutputBuffer
+{
+    vec4 values[];
+};
+
+uniform int sampleCount;
+
+void main()
+{
+    uint i = gl_GlobalInvocationID.x;
+
+    if (i >= uint(sampleCount))
+        return;
+
+    float x = float(i) / float(sampleCount - 1);
+
+    vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
+
+    #MATHLUT_FUNCTION
+
+    values[i] = result;
+}

@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="MathLUT/MathLUT.vcxproj" Id="6da39c5a-966b-41a7-9bfd-d4db3f285723" />
+</Solution>
