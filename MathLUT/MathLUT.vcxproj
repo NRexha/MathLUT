@@ -149,6 +149,10 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Core\Shader.cpp" />
     <ClCompile Include="src\Core\ShaderSource.cpp" />
+    <ClCompile Include="src\Graph\CurveRenderer.cpp" />
+    <ClCompile Include="src\Graph\GraphRenderer.cpp" />
+    <ClCompile Include="src\Graph\GraphView.cpp" />
+    <ClCompile Include="src\Graph\GridRenderer.cpp" />
     <ClCompile Include="src\Language\FunctionParser.cpp" />
     <ClCompile Include="src\Language\GLSLGenerator.cpp" />
     <ClCompile Include="src\LUT\LUTGenerator.cpp" />
@@ -156,11 +160,23 @@
   <ItemGroup>
     <ClInclude Include="src\Core\Shader.h" />
     <ClInclude Include="src\Core\ShaderSource.h" />
+    <ClInclude Include="src\Graph\CurveRenderer.h" />
+    <ClInclude Include="src\Graph\GraphRenderer.h" />
+    <ClInclude Include="src\Graph\GraphShader.h" />
+    <ClInclude Include="src\Graph\GraphState.h" />
+    <ClInclude Include="src\Graph\GraphTransform.h" />
+    <ClInclude Include="src\Graph\GraphView.h" />
+    <ClInclude Include="src\Graph\GridRenderer.h" />
     <ClInclude Include="src\Language\FunctionParser.h" />
     <ClInclude Include="src\Language\GLSLGenerator.h" />
     <ClInclude Include="src\LUT\LUTGenerator.h" />
+    <ClInclude Include="src\LUT\LUTSample.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\Functions\TestFunction.mlut" />
+    <None Include="src\Shaders\Curve.frag" />
+    <None Include="src\Shaders\Graph.vert" />
+    <None Include="src\Shaders\Grid.frag" />
     <None Include="src\Shaders\TestCompute.comp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

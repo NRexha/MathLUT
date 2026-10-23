@@ -4,7 +4,7 @@
 
 bool GLSLGenerator::Generate(const std::string& shaderTemplate, const std::vector<FunctionAssignment>& assignments, std::string& generatedSource, std::string& error) const
 {
-    const std::string marker = "#MATHLUT_FUNCTION";
+    const std::string marker = "//MATHLUT_FUNCTION";
 
     const size_t markerPosition = shaderTemplate.find(marker);
 

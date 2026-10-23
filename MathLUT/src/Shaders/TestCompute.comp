@@ -20,7 +20,7 @@ void main()
 
     vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
 
-    #MATHLUT_FUNCTION
+    //MATHLUT_FUNCTION
 
     values[i] = result;
 }
