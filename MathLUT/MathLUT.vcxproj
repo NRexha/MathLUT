@@ -160,6 +160,7 @@
     <ClCompile Include="src\Graph\GraphRenderer.cpp" />
     <ClCompile Include="src\Graph\GraphView.cpp" />
     <ClCompile Include="src\Graph\GridRenderer.cpp" />
+    <ClCompile Include="src\Language\BuiltinRegistry.cpp" />
     <ClCompile Include="src\Language\FunctionParser.cpp" />
     <ClCompile Include="src\Language\GLSLGenerator.cpp" />
     <ClCompile Include="src\LUT\LUTGenerator.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="src\Graph\GraphTransform.h" />
     <ClInclude Include="src\Graph\GraphView.h" />
     <ClInclude Include="src\Graph\GridRenderer.h" />
+    <ClInclude Include="src\Language\BuiltinRegistry.h" />
     <ClInclude Include="src\Language\FunctionParser.h" />
     <ClInclude Include="src\Language\GLSLGenerator.h" />
     <ClInclude Include="src\LUT\LUTGenerator.h" />

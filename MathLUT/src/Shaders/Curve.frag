@@ -22,8 +22,11 @@ void main()
     float x = graph.x;
     float y = graph.y;
     float inDomain = step(0.0, x) * step(x, 1.0);
-
     vec4 sampleValue = texture(uSamples, clamp(x, 0.0, 1.0));
+
+    //float wrappedX = fract(x);
+    //vec4 sampleValue = texture(uSamples, wrappedX);
+
 
     float red = Line(abs(y - sampleValue.r) * uPixelsPerUnit, 1.5) * inDomain * uVisibleChannels.r;
     float green = Line(abs(y - sampleValue.g) * uPixelsPerUnit, 1.5) * inDomain * uVisibleChannels.g;

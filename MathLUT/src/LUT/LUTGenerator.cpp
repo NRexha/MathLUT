@@ -1,150 +1,106 @@
 #include "LUTGenerator.h"
 
-#include "../Core/Shader.h"
 #include "../Core/ShaderSource.h"
 #include "../Language/FunctionParser.h"
 #include "../Language/GLSLGenerator.h"
-#include "LUTSample.h"
+#include "../Language/BuiltinRegistry.h"
 
 #include <glad/glad.h>
 #include <iostream>
-#include <vector>
+#include <regex>
 
-bool LUTGenerator::RunComputeTest(const std::string& functionSource) const
+bool LUTGenerator::UsesTime(const std::string& functionSource) const
 {
-    //load compute shader
-    std::string shaderTemplate;
-    if (!ShaderSource::LoadFromFile("src/Shaders/TestCompute.comp", shaderTemplate))
-        return false;
-
-    //parse user function
-    FunctionParser parser;
-    std::vector<FunctionAssignment> assignments;
-    std::string error;
-
-    if (!parser.Parse(functionSource, assignments, error))
-    {
-        std::cerr << "Function parsing failed:\n" << error << '\n';
-        return false;
-    }
-
-    //insert assignments into shader
-    GLSLGenerator generator;
-    std::string generatedSource;
-
-    if (!generator.Generate(shaderTemplate, assignments, generatedSource, error))
-    {
-        std::cerr << "GLSL generation failed:\n" << error << '\n';
-        return false;
-    }
-
-    //compile and link the generated shader
-    Shader computeShader(generatedSource.c_str());
-    if (!computeShader.IsValid())
-        return false;
-
-    //temp output buffer
-    constexpr int sampleCount = 8;
-    std::vector<float> results(sampleCount * 4, 0.0f);
-    GLuint outputBuffer = 0;
-    glGenBuffers(1, &outputBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, static_cast<GLsizeiptr>(results.size() * sizeof(float)), nullptr, GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
-
-    //run shader
-    computeShader.Use();
-    const GLint location = glGetUniformLocation(computeShader.GetProgramID(), "sampleCount");
-    glUniform1i(location, sampleCount);
-    glDispatchCompute(sampleCount, 1, 1);
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
-
-    //read result
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
-    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(results.size() * sizeof(float)), results.data());
-
-    std::cout << "\nResults:\n";
-    std::cout << "-------------------\n";
-
-    for (int i = 0; i < sampleCount; ++i)
-    {
-        const int offset = i * 4;
-        std::cout << "Sample " << i << " | R: " << results[offset] << " | G: " << results[offset + 1] << " | B: " << results[offset + 2] << " | A: " << results[offset + 3] << '\n';
-    }
-
-    //release
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-    glDeleteBuffers(1, &outputBuffer);
-    return true;
+    static const std::regex timeIdentifier(R"(\b_Time\b)");
+    return std::regex_search(functionSource, timeIdentifier);
 }
 
-bool LUTGenerator::GenerateSamples(const std::string& functionSource, std::vector<LUTSample>& samples) const
+bool LUTGenerator::GenerateSamples(const std::string& functionSource, std::vector<LUTSample>& samples, float time)
 {
-    constexpr GLsizei sampleCount = 1024;
-    std::string shaderTemplate, generatedSource, error;
-
-    //load compute shader
-    if (!ShaderSource::LoadFromFile("src/Shaders/TestCompute.comp", shaderTemplate))
-        return false;
-
-    //parse user function
-    FunctionParser parser;
-    std::vector<FunctionAssignment> assignments;
-
-    if (!parser.Parse(functionSource, assignments, error))
+    if (!computeShader || compiledFunctionSource != functionSource)
     {
-        std::cerr << "Function parsing failed:\n" << error << '\n';
-        return false;
+        std::string shaderTemplate, generatedSource, error;
+
+        if (!ShaderSource::LoadFromFile("src/Shaders/TestCompute.comp", shaderTemplate))
+            return false;
+
+        FunctionParser parser;
+        std::vector<FunctionStatement> statements;
+
+        if (!parser.Parse(functionSource, statements, error))
+        {
+            std::cerr << "Function parsing failed:\n" << error << '\n';
+            return false;
+        }
+
+        GLSLGenerator generator;
+
+        if (!generator.Generate(shaderTemplate, statements, generatedSource, error))
+        {
+            std::cerr << "GLSL generation failed:\n" << error << '\n';
+            return false;
+        }
+
+        auto newShader = std::make_unique<Shader>(generatedSource.c_str());
+
+        if (!newShader->IsValid())
+            return false;
+
+        computeShader = std::move(newShader);
+        compiledFunctionSource = functionSource;
     }
 
-    //insert assignments into shader
-    GLSLGenerator generator;
-
-    if (!generator.Generate(shaderTemplate, assignments, generatedSource, error))
+    if (outputBuffer == 0)
     {
-        std::cerr << "GLSL generation failed:\n" << error << '\n';
-        return false;
+        glGenBuffers(1, &outputBuffer);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, static_cast<GLsizeiptr>(sampleCount * sizeof(LUTSample)), nullptr, GL_DYNAMIC_READ);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
     }
 
-    //compile and link the generated shader
-    Shader computeShader(generatedSource.c_str());
+    computeShader->Use();
 
-    if (!computeShader.IsValid())
-        return false;
-
-    //allocate output buffer
-    GLuint outputBuffer = 0;
-    glGenBuffers(1, &outputBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, static_cast<GLsizeiptr>(sampleCount * sizeof(LUTSample)), nullptr, GL_DYNAMIC_READ);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
-
-    //run shader
-    computeShader.Use();
-    const GLint location = glGetUniformLocation(computeShader.GetProgramID(), "sampleCount");
-
-    if (location < 0)
+    const GLint countLocation = glGetUniformLocation(computeShader->GetProgramID(), "sampleCount");
+    if (countLocation < 0)
     {
         std::cerr << "Compute shader is missing the sampleCount uniform.\n";
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-        glDeleteBuffers(1, &outputBuffer);
         return false;
     }
 
-    glUniform1i(location, sampleCount);
+    glUniform1i(countLocation, sampleCount);
+
+    for (const BuiltinVariable& builtin : BuiltinRegistry::GetAll())
+    {
+        if (builtin.type != BuiltinType::Uniform || builtin.name != "_Time")
+            continue;
+
+        const GLint location = glGetUniformLocation(computeShader->GetProgramID(), builtin.glslName.c_str());
+        if (location >= 0)
+            glUniform1f(location, time);
+    }
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
     glDispatchCompute(sampleCount, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
 
-    //read samples
     samples.resize(sampleCount);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
     glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, static_cast<GLsizeiptr>(samples.size() * sizeof(LUTSample)), samples.data());
 
-    //release
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-    glDeleteBuffers(1, &outputBuffer);
+
     return true;
+}
+
+void LUTGenerator::Shutdown()
+{
+    if (outputBuffer != 0)
+    {
+        glDeleteBuffers(1, &outputBuffer);
+        outputBuffer = 0;
+    }
+
+    computeShader.reset();
+    compiledFunctionSource.clear();
 }

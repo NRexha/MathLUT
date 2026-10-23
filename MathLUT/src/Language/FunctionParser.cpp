@@ -1,3 +1,4 @@
+
 #include "FunctionParser.h"
 
 #include <sstream>
@@ -8,33 +9,24 @@ namespace
     std::string Trim(const std::string& text)
     {
         const std::string whitespace = " \t\r\n";
-
         const size_t start = text.find_first_not_of(whitespace);
 
         if (start == std::string::npos)
             return "";
 
         const size_t end = text.find_last_not_of(whitespace);
-
         return text.substr(start, end - start + 1);
-    }
-
-    bool IsValidChannel(const std::string& channel)
-    {
-        return channel == "r" || channel == "g" || channel == "b" || channel == "a" || channel == "rgb" || channel == "rgba";
     }
 }
 
-bool FunctionParser::Parse(const std::string& source, std::vector<FunctionAssignment>& assignments, std::string& error) const
+bool FunctionParser::Parse(const std::string& source, std::vector<FunctionStatement>& statements, std::string& error) const
 {
-    assignments.clear();
+    statements.clear();
     error.clear();
 
     std::istringstream input(source);
-    std::string line;
-    std::string statement;
-    int lineNumber = 0;
-    int statementStartLine = 1;
+    std::string line, statement;
+    int lineNumber = 0, statementStartLine = 1;
 
     while (std::getline(input, line))
     {
@@ -59,36 +51,11 @@ bool FunctionParser::Parse(const std::string& source, std::vector<FunctionAssign
         while ((semicolonPosition = statement.find(';')) != std::string::npos)
         {
             std::string current = Trim(statement.substr(0, semicolonPosition));
-
             statement.erase(0, semicolonPosition + 1);
 
-            if (current.empty())
-                continue;
+            if (!current.empty())
+                statements.push_back({ current, statementStartLine });
 
-            const size_t equalsPosition = current.find('=');
-
-            if (equalsPosition == std::string::npos)
-            {
-                error = "Expected an assignment at line " + std::to_string(statementStartLine) + ".";
-                return false;
-            }
-
-            const std::string channel = Trim(current.substr(0, equalsPosition));
-            const std::string expression = Trim(current.substr(equalsPosition + 1));
-
-            if (!IsValidChannel(channel))
-            {
-                error = "Unknown channel '" + channel + "' at line " + std::to_string(statementStartLine) + ".";
-                return false;
-            }
-
-            if (expression.empty() || expression.front() == '=')
-            {
-                error = "Invalid expression at line " + std::to_string(statementStartLine) + ".";
-                return false;
-            }
-
-            assignments.push_back({ channel, expression });
             statementStartLine = lineNumber;
         }
     }
@@ -99,9 +66,9 @@ bool FunctionParser::Parse(const std::string& source, std::vector<FunctionAssign
         return false;
     }
 
-    if (assignments.empty())
+    if (statements.empty())
     {
-        error = "The function contains no assignments.";
+        error = "The function contains no statements.";
         return false;
     }
 

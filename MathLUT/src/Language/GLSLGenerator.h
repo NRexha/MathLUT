@@ -8,6 +8,5 @@
 class GLSLGenerator
 {
 public:
-    bool Generate(const std::string& shaderTemplate, const std::vector<FunctionAssignment>& assignments, std::string& generatedSource, std::string& error) const;
+    bool Generate(const std::string& shaderTemplate, const std::vector<FunctionStatement>& statements, std::string& generatedSource, std::string& error) const;
 };
-#pragma once

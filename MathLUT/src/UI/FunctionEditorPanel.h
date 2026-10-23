@@ -12,6 +12,7 @@ class FunctionEditorPanel
 public:
     bool Initialize(LUTGenerator& lutGenerator, GraphView& graphView);
     void Render(float panelWidth, float panelHeight);
+    float GetWidth() const { return windowWidth;}
 
 private:
     void UpdateFunction();
@@ -22,5 +23,10 @@ private:
 
     std::string pendingSource;
     std::string lastAttemptedSource;
+    std::string activeSource;
+
     std::chrono::steady_clock::time_point lastEditTime;
+    std::chrono::steady_clock::time_point startTime;
+    std::chrono::steady_clock::time_point lastPreviewUpdate;
+    float windowWidth = 450.0f;
 };

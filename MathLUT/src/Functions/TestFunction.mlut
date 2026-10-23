@@ -1,4 +1,9 @@
-r = x;
-g = x * x;
-b = sqrt(x);
-a = 0.5 + 0.5 * sin(x * 6.2831853);
+float hx = x * 2.0 - 1.0;
+float x2 = hx * hx;
+float x23 = pow(abs(hx), 2.0 / 3.0);
+float root = sqrt(max(x23 * x23 - 4.0 * x2 + 4.0, 0.0));
+
+r = (x23 + root) / 3.0;
+g = (x23 - root + 2.0) / 3.0;
+b = x;
+a = -x + 1.0;

@@ -122,15 +122,15 @@ void Application::RunLoop()
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
         glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 
-        float panelWidth = std::clamp(windowWidth * 0.35f, 350.0f, 600.0f);
-        int graphX = windowWidth > 0 ? static_cast<int>(panelWidth * framebufferWidth / windowWidth) : 0;
-        int graphWidth = framebufferWidth - graphX;
-
         glViewport(0, 0, framebufferWidth, framebufferHeight);
         glClearColor(0.12f, 0.13f, 0.16f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         RenderUI();
+
+        const float scaleX = windowWidth > 0 ? static_cast<float>(framebufferWidth) / windowWidth : 1.0f;
+        const int graphX = static_cast<int>(editorWidth * scaleX);
+        const int graphWidth = framebufferWidth - graphX;
 
         graphView.Update();
         graphView.Render(graphX, 0, graphWidth, framebufferHeight);
@@ -147,17 +147,16 @@ void Application::RenderUI()
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-    float panelWidth = std::clamp(windowWidth * 0.35f, 350.0f, 600.0f);
-
-    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(panelWidth, static_cast<float>(windowHeight)), ImGuiCond_Always);
-
-    functionEditorPanel.Render(panelWidth, static_cast<float>(windowHeight));
+    functionEditorPanel.Render(450.0f, static_cast<float>(windowHeight));
+    editorWidth = functionEditorPanel.GetWidth();
 }
 
 
 void Application::Shutdown()
 {
+    if (window)
+        lutGenerator.Shutdown();
+
     if (imguiOpenGLInitialized)
         ImGui_ImplOpenGL3_Shutdown();
 

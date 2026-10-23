@@ -114,6 +114,9 @@
     <ClCompile Include="src\UI\FunctionEditorPanel.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\Language\BuiltinRegistry.cpp">
+      <Filter>Source Files\Language</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Shader.h">
@@ -160,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="src\UI\FunctionEditorPanel.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Language\BuiltinRegistry.h">
+      <Filter>Header Files\Language</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

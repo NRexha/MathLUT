@@ -24,12 +24,17 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph)
 
     pendingSource = functionSource;
     lastAttemptedSource = functionSource;
-    lastEditTime = std::chrono::steady_clock::now();
+    startTime = std::chrono::steady_clock::now();
+    lastEditTime = startTime;
+    lastPreviewUpdate = startTime;
 
     std::vector<LUTSample> samples;
 
-    if (lutGenerator->GenerateSamples(functionSource, samples))
+    if (lutGenerator->GenerateSamples(functionSource, samples, 0.0f))
+    {
+        activeSource = functionSource;
         graphView->SetSamples(samples);
+    }
 
     return true;
 }
@@ -37,10 +42,14 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph)
 void FunctionEditorPanel::Render(float panelWidth, float panelHeight)
 {
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_FirstUseEver);
 
-    ImGui::Begin("Function Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    ImGui::Begin("Function Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+
+    windowWidth = ImGui::GetWindowWidth();
+
     editor.Render("##FunctionCode", ImVec2(0.0f, 0.0f));
+
     ImGui::End();
 
     UpdateFunction();
@@ -48,20 +57,44 @@ void FunctionEditorPanel::Render(float panelWidth, float panelHeight)
 
 void FunctionEditorPanel::UpdateFunction()
 {
-    std::string currentSource = editor.GetText();
+    using Clock = std::chrono::steady_clock;
+
+    const auto now = Clock::now();
+    const std::string currentSource = editor.GetText();
 
     if (currentSource != pendingSource)
     {
         pendingSource = currentSource;
-        lastEditTime = std::chrono::steady_clock::now();
+        lastEditTime = now;
     }
 
-    if (pendingSource != lastAttemptedSource && std::chrono::steady_clock::now() - lastEditTime >= std::chrono::milliseconds(250))
+    if (pendingSource != lastAttemptedSource && now - lastEditTime >= std::chrono::milliseconds(250))
     {
         lastAttemptedSource = pendingSource;
+
+        const float time = std::chrono::duration<float>(now - startTime).count();
         std::vector<LUTSample> updatedSamples;
 
-        if (lutGenerator->GenerateSamples(pendingSource, updatedSamples))
+        if (lutGenerator->GenerateSamples(pendingSource, updatedSamples, time))
+        {
+            activeSource = pendingSource;
             graphView->SetSamples(updatedSamples);
+            lastPreviewUpdate = now;
+        }
+    }
+
+    if (currentSource != activeSource || activeSource.empty() || !lutGenerator->UsesTime(activeSource))
+        return;
+
+    if (now - lastPreviewUpdate < std::chrono::duration<double>(1.0 / 60.0))
+        return;
+
+    const float time = std::chrono::duration<float>(now - startTime).count();
+    std::vector<LUTSample> updatedSamples;
+
+    if (lutGenerator->GenerateSamples(activeSource, updatedSamples, time))
+    {
+        graphView->SetSamples(updatedSamples);
+        lastPreviewUpdate = now;
     }
 }

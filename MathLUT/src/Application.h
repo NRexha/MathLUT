@@ -11,6 +11,7 @@ class Application
 {
 public:
 	int Run();
+	float editorWidth = 450.0f;
 
 private:
 	bool Initialize();
@@ -30,4 +31,5 @@ private:
 	bool imguiGlfwInitialized = false;
 	bool imguiOpenGLInitialized = false;
 	bool graphInitialized = false;
+	
 };
