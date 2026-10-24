@@ -2,7 +2,6 @@
 #include "Application.h"
 
 #include <iostream>
-#include <vector>
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"

@@ -32,10 +32,8 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph, 
         std::cerr << "Failed to load test function.\n";
         return false;
     }
-#pragma endregion
 
-#pragma region Editor Styling
-
+    //editor Styling
     editor.SetLanguage(TextEditor::Language::Glsl());
 
     TextEditor::Palette palette = TextEditor::GetDarkPalette();
@@ -58,9 +56,8 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph, 
 
     editor.SetPalette(palette);
 
-#pragma endregion
 
-#pragma region Autocomplete
+    //autocomplete
 
     autoCompleteConfig.triggerOnTyping = true;
     autoCompleteConfig.triggerOnShortcut = true;
@@ -98,9 +95,9 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph, 
 
     editor.SetAutoCompleteConfig(&autoCompleteConfig);
 
-#pragma endregion
 
-#pragma region Initial Source and Preview
+
+    //source and preview
 
     editor.SetText(functionSource);
 

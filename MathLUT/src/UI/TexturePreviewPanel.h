@@ -18,9 +18,6 @@ public:
     void Shutdown();
 
 private:
-    //PNG export
-    bool ExportPNG();
-
     LUTGenerator* lutGenerator = nullptr;
     FunctionEditorPanel* functionEditorPanel = nullptr;
 

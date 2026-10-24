@@ -124,7 +124,10 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\TexturePreviewPanel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LUT\TextureExporter.cpp">
+      <Filter>Source Files\LUT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,10 +183,13 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="src\UI\TexturePreviewPanel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\stb\stb_image_write.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\LUT</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LUT\TextureExporter.h">
+      <Filter>Header Files\LUT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -202,7 +208,9 @@
     <None Include="src\Shaders\TestCompute.comp">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="src\Shaders\TexturePreview.comp" />
+    <None Include="src\Shaders\TexturePreview.comp">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Font Include="src\Fonts\JetBrainsMono-Regular.ttf">

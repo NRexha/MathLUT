@@ -164,6 +164,7 @@
     <ClCompile Include="src\Language\FunctionParser.cpp" />
     <ClCompile Include="src\Language\GLSLGenerator.cpp" />
     <ClCompile Include="src\LUT\LUTGenerator.cpp" />
+    <ClCompile Include="src\LUT\TextureExporter.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\UI\FunctionEditorPanel.cpp" />
     <ClCompile Include="src\UI\MathLUTStyle.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="src\Language\GLSLGenerator.h" />
     <ClInclude Include="src\LUT\LUTGenerator.h" />
     <ClInclude Include="src\LUT\LUTSample.h" />
+    <ClInclude Include="src\LUT\TextureExporter.h" />
     <ClInclude Include="src\UI\FunctionEditorPanel.h" />
     <ClInclude Include="src\UI\MathLUTStyle.h" />
     <ClInclude Include="src\UI\TexturePreviewPanel.h" />
