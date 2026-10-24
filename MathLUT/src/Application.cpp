@@ -1,12 +1,14 @@
 #include <glad/glad.h>
 #include "Application.h"
 
-#include <algorithm>
 #include <iostream>
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "UI/MathLUTStyle.h"
+
+#pragma region Application Lifecycle
 
 int Application::Run()
 {
@@ -20,6 +22,10 @@ int Application::Run()
     Shutdown();
     return 0;
 }
+
+#pragma endregion
+
+#pragma region Initialization
 
 bool Application::Initialize()
 {
@@ -40,7 +46,7 @@ bool Application::Initialize()
     glfwSwapInterval(1);
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << '\n';
 
-    if (!functionEditorPanel.Initialize(lutGenerator, graphView))
+    if (!functionEditorPanel.Initialize(lutGenerator, graphView, codeFont))
         return false;
 
     return true;
@@ -85,8 +91,16 @@ bool Application::InitializeImGui()
     ImGui::CreateContext();
     imguiContextCreated = true;
 
-    ImGui::GetIO().FontGlobalScale = 1.25f;
-    ImGui::StyleColorsDark();
+    ImGuiIO& io = ImGui::GetIO();
+    codeFont = io.Fonts->AddFontFromFileTTF("src/Fonts/JetBrainsMono-Regular.ttf", 18.0f);
+
+    if (!codeFont)
+        std::cerr << "Failed to load editor font.\n";
+
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.FontGlobalScale = 1.25f;
+
+    MathLUTStyle::Apply();
 
     if (!ImGui_ImplGlfw_InitForOpenGL(window, true))
     {
@@ -106,6 +120,10 @@ bool Application::InitializeImGui()
     return true;
 }
 
+#pragma endregion
+
+#pragma region Main Loop
+
 void Application::RunLoop()
 {
     while (!glfwWindowShouldClose(window))
@@ -116,10 +134,7 @@ void Application::RunLoop()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        int windowWidth, windowHeight;
         int framebufferWidth, framebufferHeight;
-
-        glfwGetWindowSize(window, &windowWidth, &windowHeight);
         glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 
         glViewport(0, 0, framebufferWidth, framebufferHeight);
@@ -127,13 +142,8 @@ void Application::RunLoop()
         glClear(GL_COLOR_BUFFER_BIT);
 
         RenderUI();
-
-        const float scaleX = windowWidth > 0 ? static_cast<float>(framebufferWidth) / windowWidth : 1.0f;
-        const int graphX = static_cast<int>(editorWidth * scaleX);
-        const int graphWidth = framebufferWidth - graphX;
-
         graphView.Update();
-        graphView.Render(graphX, 0, graphWidth, framebufferHeight);
+        graphView.RenderTexture(graphWidth, graphHeight);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -142,15 +152,83 @@ void Application::RunLoop()
     }
 }
 
+#pragma endregion
+
+#pragma region UI Rendering
+
 void Application::RenderUI()
 {
-    int windowWidth, windowHeight;
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+    ImGuiID dockspaceID = ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
-    functionEditorPanel.Render(450.0f, static_cast<float>(windowHeight));
-    editorWidth = functionEditorPanel.GetWidth();
+    static bool layoutInitialized = false;
+
+    if (!layoutInitialized)
+    {
+        ImGui::DockBuilderRemoveNode(dockspaceID);
+        ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoWindowMenuButton);
+        ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
+
+        ImGuiID editorNodeID, graphNodeID;
+        ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Left, 0.5f, &editorNodeID, &graphNodeID);
+
+        ImGui::DockBuilderDockWindow("Function Editor", editorNodeID);
+        ImGui::DockBuilderDockWindow("Graph", graphNodeID);
+
+        ImGui::DockBuilderFinish(dockspaceID);
+        layoutInitialized = true;
+    }
+
+    functionEditorPanel.Render();
+    RenderGraphPanel();
 }
 
+void Application::RenderGraphPanel()
+{
+    if (!ImGui::Begin("Graph"))
+    {
+        ImGui::End();
+        graphWidth = graphHeight = 0;
+        graphView.Render(0, 0, 0, 0);
+        return;
+    }
+
+    const ImVec2 position = ImGui::GetCursorScreenPos();
+    const ImVec2 size = ImGui::GetContentRegionAvail();
+
+    if (size.x > 0.0f && size.y > 0.0f)
+    {
+        int windowWidth, windowHeight;
+        int framebufferWidth, framebufferHeight;
+
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+
+        if (windowWidth > 0 && windowHeight > 0)
+        {
+            const float scaleX = static_cast<float>(framebufferWidth) / windowWidth;
+            const float scaleY = static_cast<float>(framebufferHeight) / windowHeight;
+
+            graphX = static_cast<int>(position.x * scaleX);
+            graphY = framebufferHeight - static_cast<int>((position.y + size.y) * scaleY);
+            graphWidth = static_cast<int>(size.x * scaleX);
+            graphHeight = static_cast<int>(size.y * scaleY);
+
+            graphView.Render(graphX, graphY, graphWidth, graphHeight);
+            ImGui::Image((ImTextureID)(intptr_t)graphView.GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
+        }
+    }
+    else
+    {
+        graphWidth = graphHeight = 0;
+        graphView.Render(0, 0, 0, 0);
+    }
+
+    ImGui::End();
+}
+
+#pragma endregion
+
+#pragma region Shutdown
 
 void Application::Shutdown()
 {
@@ -178,3 +256,5 @@ void Application::Shutdown()
     if (glfwInitialized)
         glfwTerminate();
 }
+
+#pragma endregion

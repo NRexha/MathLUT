@@ -6,30 +6,42 @@
 #include "Graph/GraphView.h"
 #include "LUT/LUTGenerator.h"
 #include "UI/FunctionEditorPanel.h"
+#include "imgui_internal.h"
 
 class Application
 {
 public:
-	int Run();
-	float editorWidth = 450.0f;
+    //app lifecycle
+    int Run();
 
 private:
-	bool Initialize();
-	bool InitializeWindow();
-	bool InitializeImGui();
-	void RunLoop();
-	void Shutdown();
-	void RenderUI();
+    bool Initialize();
+    bool InitializeWindow();
+    bool InitializeImGui();
+    void Shutdown();
 
-	GLFWwindow* window = nullptr;
-	GraphView graphView;
-	LUTGenerator lutGenerator;
-	FunctionEditorPanel functionEditorPanel;
+    void RunLoop();
+    void RenderUI();
+    void RenderGraphPanel();
 
-	bool glfwInitialized = false;
-	bool imguiContextCreated = false;
-	bool imguiGlfwInitialized = false;
-	bool imguiOpenGLInitialized = false;
-	bool graphInitialized = false;
-	
+    void SetupDockingLayout();
+    bool dockingLayoutInitialized = false;
+
+    GLFWwindow* window = nullptr;
+    GraphView graphView;
+    LUTGenerator lutGenerator;
+    FunctionEditorPanel functionEditorPanel;
+
+    bool glfwInitialized = false;
+    bool imguiContextCreated = false;
+    bool imguiGlfwInitialized = false;
+    bool imguiOpenGLInitialized = false;
+    bool graphInitialized = false;
+
+    int graphX = 0;
+    int graphY = 0;
+    int graphWidth = 0;
+    int graphHeight = 0;
+
+    ImFont* codeFont = nullptr;
 };

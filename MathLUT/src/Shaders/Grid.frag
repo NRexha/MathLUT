@@ -25,17 +25,18 @@ void main()
 {
     vec2 localPosition = gl_FragCoord.xy - uViewportOrigin;
     vec2 graph = uCenter + (localPosition - uViewport * 0.5) / uPixelsPerUnit;
-    vec3 color = vec3(0.075, 0.082, 0.095);
+
+    vec3 color = vec3(0.094, 0.102, 0.125);
 
     float minorGrid = max(GridLine(graph.x, uGridStep), GridLine(graph.y, uGridStep));
     float majorGrid = max(GridLine(graph.x, uGridStep * 5.0), GridLine(graph.y, uGridStep * 5.0));
 
-    color = mix(color, vec3(0.13, 0.14, 0.16), minorGrid * 0.45);
-    color = mix(color, vec3(0.19, 0.20, 0.23), majorGrid * 0.65);
+    color = mix(color, vec3(0.125, 0.133, 0.157), minorGrid * 0.40);
+    color = mix(color, vec3(0.176, 0.192, 0.231), majorGrid * 0.65);
 
     float axisX = Line(abs(graph.x) * uPixelsPerUnit, 0.8);
     float axisY = Line(abs(graph.y) * uPixelsPerUnit, 0.8);
-    color = mix(color, vec3(0.48, 0.50, 0.54), max(axisX, axisY));
+    color = mix(color, vec3(0.40, 0.65, 0.92), max(axisX, axisY));
 
     FragColor = vec4(color, 1.0);
 }

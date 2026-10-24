@@ -10,9 +10,9 @@
 class FunctionEditorPanel
 {
 public:
-    bool Initialize(LUTGenerator& lutGenerator, GraphView& graphView);
-    void Render(float panelWidth, float panelHeight);
-    float GetWidth() const { return windowWidth;}
+    //initialization and UI
+    bool Initialize(LUTGenerator& lutGenerator, GraphView& graphView, ImFont* codeFont);
+    void Render();
 
 private:
     void UpdateFunction();
@@ -20,13 +20,15 @@ private:
     TextEditor editor;
     LUTGenerator* lutGenerator = nullptr;
     GraphView* graphView = nullptr;
+    ImFont* codeFont = nullptr;
 
     std::string pendingSource;
     std::string lastAttemptedSource;
     std::string activeSource;
 
-    std::chrono::steady_clock::time_point lastEditTime;
     std::chrono::steady_clock::time_point startTime;
+    std::chrono::steady_clock::time_point lastEditTime;
     std::chrono::steady_clock::time_point lastPreviewUpdate;
-    float windowWidth = 450.0f;
+
+    TextEditor::AutoCompleteConfig autoCompleteConfig;
 };

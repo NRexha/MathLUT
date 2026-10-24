@@ -1,15 +1,29 @@
 #include "FunctionEditorPanel.h"
-
 #include "../Core/ShaderSource.h"
+#include "../Language/BuiltinRegistry.h"
+
 #include "imgui.h"
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
-bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph)
+#pragma region Constants
+
+namespace
+{
+    constexpr ImU32 EditorBackground = IM_COL32(24, 26, 32, 255);
+}
+
+#pragma endregion
+
+#pragma region Initialization
+
+bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph, ImFont* font)
 {
     lutGenerator = &generator;
     graphView = &graph;
+    codeFont = font;
 
     std::string functionSource;
 
@@ -18,8 +32,76 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph)
         std::cerr << "Failed to load test function.\n";
         return false;
     }
+#pragma endregion
+
+#pragma region Editor Styling
 
     editor.SetLanguage(TextEditor::Language::Glsl());
+
+    TextEditor::Palette palette = TextEditor::GetDarkPalette();
+
+    palette[static_cast<size_t>(TextEditor::Color::background)] = EditorBackground;
+    palette[static_cast<size_t>(TextEditor::Color::text)] = IM_COL32(220, 223, 230, 255);
+    palette[static_cast<size_t>(TextEditor::Color::keyword)] = IM_COL32(198, 120, 221, 255);
+    palette[static_cast<size_t>(TextEditor::Color::declaration)] = IM_COL32(97, 175, 239, 255);
+    palette[static_cast<size_t>(TextEditor::Color::number)] = IM_COL32(209, 154, 102, 255);
+    palette[static_cast<size_t>(TextEditor::Color::string)] = IM_COL32(152, 195, 121, 255);
+    palette[static_cast<size_t>(TextEditor::Color::comment)] = IM_COL32(110, 120, 135, 255);
+    palette[static_cast<size_t>(TextEditor::Color::identifier)] = IM_COL32(220, 223, 230, 255);
+    palette[static_cast<size_t>(TextEditor::Color::knownIdentifier)] = IM_COL32(97, 175, 239, 255);
+    palette[static_cast<size_t>(TextEditor::Color::cursor)] = IM_COL32(220, 223, 230, 255);
+    palette[static_cast<size_t>(TextEditor::Color::selection)] = IM_COL32(65, 85, 115, 180);
+    palette[static_cast<size_t>(TextEditor::Color::lineNumber)] = IM_COL32(95, 101, 113, 255);
+    palette[static_cast<size_t>(TextEditor::Color::currentLineNumber)] = IM_COL32(220, 223, 230, 255);
+    palette[static_cast<size_t>(TextEditor::Color::currentLineHighlight)] = IM_COL32(35, 38, 46, 255);
+    palette[static_cast<size_t>(TextEditor::Color::currentLineHighlightBorder)] = IM_COL32(45, 49, 59, 255);
+
+    editor.SetPalette(palette);
+
+#pragma endregion
+
+#pragma region Autocomplete
+
+    autoCompleteConfig.triggerOnTyping = true;
+    autoCompleteConfig.triggerOnShortcut = true;
+    autoCompleteConfig.triggerInComments = false;
+    autoCompleteConfig.triggerInStrings = false;
+    autoCompleteConfig.triggerDelay = std::chrono::milliseconds(150);
+    autoCompleteConfig.suggestionWidth = 24;
+
+    autoCompleteConfig.callback = [](TextEditor::AutoCompleteState& state)
+        {
+            state.suggestions.clear();
+
+            const std::string& term = state.searchTerm;
+
+            static const std::vector<std::string> functions =
+            {
+                "abs", "acos", "asin", "atan", "ceil", "clamp", "cos", "degrees", "distance", "dot", "exp", "exp2", "floor", "fract", "length", "log", "log2",
+                "max", "min", "mix", "mod", "normalize", "pow", "radians", "reflect", "refract", "sign", "sin", "smoothstep", "sqrt", "step", "tan"
+            };
+
+            for (const BuiltinVariable& builtin : BuiltinRegistry::GetAll())
+            {
+                if (term.empty() || builtin.name.compare(0, term.size(), term) == 0)
+                    state.suggestions.push_back(builtin.name);
+            }
+
+            for (const std::string& function : functions)
+            {
+                if (term.empty() || function.compare(0, term.size(), term) == 0)
+                    state.suggestions.push_back(function);
+            }
+
+            std::sort(state.suggestions.begin(), state.suggestions.end());
+        };
+
+    editor.SetAutoCompleteConfig(&autoCompleteConfig);
+
+#pragma endregion
+
+#pragma region Initial Source and Preview
+
     editor.SetText(functionSource);
 
     pendingSource = functionSource;
@@ -39,21 +121,32 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph)
     return true;
 }
 
-void FunctionEditorPanel::Render(float panelWidth, float panelHeight)
+#pragma endregion
+
+#pragma region Rendering
+
+void FunctionEditorPanel::Render()
 {
-    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_FirstUseEver);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, EditorBackground);
+    ImGui::Begin("Function Editor");
 
-    ImGui::Begin("Function Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+    if (codeFont)
+        ImGui::PushFont(codeFont);
 
-    windowWidth = ImGui::GetWindowWidth();
+    editor.Render("##FunctionCode", ImGui::GetContentRegionAvail());
 
-    editor.Render("##FunctionCode", ImVec2(0.0f, 0.0f));
+    if (codeFont)
+        ImGui::PopFont();
 
     ImGui::End();
+    ImGui::PopStyleColor();
 
     UpdateFunction();
 }
+
+#pragma endregion
+
+#pragma region Preview Updates
 
 void FunctionEditorPanel::UpdateFunction()
 {
@@ -67,6 +160,8 @@ void FunctionEditorPanel::UpdateFunction()
         pendingSource = currentSource;
         lastEditTime = now;
     }
+
+#pragma region Debounced Compilation
 
     if (pendingSource != lastAttemptedSource && now - lastEditTime >= std::chrono::milliseconds(250))
     {
@@ -83,6 +178,10 @@ void FunctionEditorPanel::UpdateFunction()
         }
     }
 
+#pragma endregion
+
+#pragma region Animated Preview
+
     if (currentSource != activeSource || activeSource.empty() || !lutGenerator->UsesTime(activeSource))
         return;
 
@@ -97,4 +196,8 @@ void FunctionEditorPanel::UpdateFunction()
         graphView->SetSamples(updatedSamples);
         lastPreviewUpdate = now;
     }
+
+#pragma endregion
 }
+
+#pragma endregion

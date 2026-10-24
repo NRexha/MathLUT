@@ -166,6 +166,7 @@
     <ClCompile Include="src\LUT\LUTGenerator.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\UI\FunctionEditorPanel.cpp" />
+    <ClCompile Include="src\UI\MathLUTStyle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="src\LUT\LUTGenerator.h" />
     <ClInclude Include="src\LUT\LUTSample.h" />
     <ClInclude Include="src\UI\FunctionEditorPanel.h" />
+    <ClInclude Include="src\UI\MathLUTStyle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Functions\TestFunction.mlut" />
@@ -191,6 +193,9 @@
     <None Include="src\Shaders\Graph.vert" />
     <None Include="src\Shaders\Grid.frag" />
     <None Include="src\Shaders\TestCompute.comp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="src\Fonts\JetBrainsMono-Regular.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

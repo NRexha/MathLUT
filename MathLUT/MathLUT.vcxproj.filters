@@ -52,6 +52,9 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{a20588de-9362-4c06-9ece-45cb07fca92d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Fonts">
+      <UniqueIdentifier>{39508be9-5dc2-4fe4-a7c2-dab34448200d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -117,6 +120,9 @@
     <ClCompile Include="src\Language\BuiltinRegistry.cpp">
       <Filter>Source Files\Language</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\MathLUTStyle.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Shader.h">
@@ -167,6 +173,9 @@
     <ClInclude Include="src\Language\BuiltinRegistry.h">
       <Filter>Header Files\Language</Filter>
     </ClInclude>
+    <ClInclude Include="src\UI\MathLUTStyle.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Functions\TestFunction.mlut">
@@ -184,5 +193,10 @@
     <None Include="src\Shaders\TestCompute.comp">
       <Filter>Source Files\Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="src\Fonts\JetBrainsMono-Regular.ttf">
+      <Filter>Source Files\Fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>
