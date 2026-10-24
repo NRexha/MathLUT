@@ -1,4 +1,3 @@
-
 #include "LUTGenerator.h"
 
 #include "../Core/ShaderSource.h"
@@ -29,7 +28,7 @@ bool LUTGenerator::GenerateSamples(const std::string& functionSource, std::vecto
     {
         std::string shaderTemplate, generatedSource, error;
 
-        if (!ShaderSource::LoadFromFile("src/Shaders/TestCompute.comp", shaderTemplate))
+        if (!ShaderSource::LoadFromFile("src/Shaders/LUTSample.comp", shaderTemplate))
             return false;
 
         FunctionParser parser;

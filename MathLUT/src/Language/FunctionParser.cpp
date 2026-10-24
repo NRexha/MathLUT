@@ -1,8 +1,6 @@
-
 #include "FunctionParser.h"
 
 #include <sstream>
-#include <cctype>
 
 namespace
 {

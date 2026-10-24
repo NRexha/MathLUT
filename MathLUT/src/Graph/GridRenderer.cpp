@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cmath>
 
+#pragma region Grid Utilities
+
 namespace
 {
     float CalculateGridStep(float pixelsPerUnit)
@@ -12,9 +14,14 @@ namespace
         float magnitude = std::pow(10.0f, std::floor(std::log10(rawStep)));
         float normalized = rawStep / magnitude;
         float niceStep = normalized < 1.5f ? 1.0f : normalized < 3.5f ? 2.0f : normalized < 7.5f ? 5.0f : 10.0f;
+
         return niceStep * magnitude;
     }
 }
+
+#pragma endregion
+
+#pragma region Initialization
 
 bool GridRenderer::Initialize()
 {
@@ -28,9 +35,15 @@ bool GridRenderer::Initialize()
     zoomLocation = glGetUniformLocation(programID, "uPixelsPerUnit");
     gridStepLocation = glGetUniformLocation(programID, "uGridStep");
     viewportOriginLocation = glGetUniformLocation(programID, "uViewportOrigin");
+
     glGenVertexArrays(1, &vertexArrayID);
+
     return vertexArrayID != 0;
 }
+
+#pragma endregion
+
+#pragma region Rendering
 
 void GridRenderer::Render(const GraphState& state, int x, int y, int width, int height)
 {
@@ -41,8 +54,10 @@ void GridRenderer::Render(const GraphState& state, int x, int y, int width, int 
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+
     glUseProgram(programID);
     glViewport(x, y, width, height);
+
     glUniform2f(viewportLocation, static_cast<float>(width), static_cast<float>(height));
     glUniform2f(viewportOriginLocation, static_cast<float>(x), static_cast<float>(y));
     glUniform2f(centerLocation, state.centerX, state.centerY);
@@ -53,6 +68,10 @@ void GridRenderer::Render(const GraphState& state, int x, int y, int width, int 
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
 }
+
+#pragma endregion
+
+#pragma region Cleanup
 
 void GridRenderer::Shutdown()
 {
@@ -68,3 +87,5 @@ void GridRenderer::Shutdown()
         programID = 0;
     }
 }
+
+#pragma endregion

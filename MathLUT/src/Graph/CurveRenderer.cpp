@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#pragma region Initialization
+
 bool CurveRenderer::Initialize()
 {
     programID = GraphShader::CreateProgram("src/Shaders/Graph.vert", "src/Shaders/Curve.frag");
@@ -16,19 +18,28 @@ bool CurveRenderer::Initialize()
     channelsLocation = glGetUniformLocation(programID, "uVisibleChannels");
     samplesLocation = glGetUniformLocation(programID, "uSamples");
     viewportOriginLocation = glGetUniformLocation(programID, "uViewportOrigin");
+
     glGenVertexArrays(1, &vertexArrayID);
+
     return vertexArrayID != 0;
 }
+
+#pragma endregion
+
+#pragma region Rendering
 
 void CurveRenderer::Render(const GraphState& state, int x, int y, int width, int height)
 {
     if (!programID || !sampleTextureID || width <= 0 || height <= 0)
         return;
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glUseProgram(programID);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_1D, sampleTextureID);
+
     glUniform1i(samplesLocation, 0);
     glViewport(x, y, width, height);
     glUniform2f(viewportLocation, static_cast<float>(width), static_cast<float>(height));
@@ -39,10 +50,15 @@ void CurveRenderer::Render(const GraphState& state, int x, int y, int width, int
 
     glBindVertexArray(vertexArrayID);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_1D, 0);
     glDisable(GL_BLEND);
 }
+
+#pragma endregion
+
+#pragma region Sample Management
 
 void CurveRenderer::SetSamples(const std::vector<LUTSample>& samples)
 {
@@ -59,6 +75,10 @@ void CurveRenderer::SetSamples(const std::vector<LUTSample>& samples)
     glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F, static_cast<GLsizei>(samples.size()), 0, GL_RGBA, GL_FLOAT, samples.data());
     glBindTexture(GL_TEXTURE_1D, 0);
 }
+
+#pragma endregion
+
+#pragma region Cleanup
 
 void CurveRenderer::Shutdown()
 {
@@ -80,3 +100,5 @@ void CurveRenderer::Shutdown()
         vertexArrayID = 0;
     }
 }
+
+#pragma endregion

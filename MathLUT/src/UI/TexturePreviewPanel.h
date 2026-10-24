@@ -22,8 +22,8 @@ private:
     FunctionEditorPanel* functionEditorPanel = nullptr;
 
     GLuint previewTexture = 0;
-    int textureWidth = 1024;
-    int textureHeight = 64;
+    int textureWidth = 64;
+    int textureHeight = 4;
 
     std::string lastTextureSource;
     int lastTextureWidth = 0;

@@ -193,11 +193,11 @@
     <ClInclude Include="src\UI\TexturePreviewPanel.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Functions\TestFunction.mlut" />
+    <None Include="src\Functions\Template.mlut" />
     <None Include="src\Shaders\Curve.frag" />
     <None Include="src\Shaders\Graph.vert" />
     <None Include="src\Shaders\Grid.frag" />
-    <None Include="src\Shaders\TestCompute.comp" />
+    <None Include="src\Shaders\LUTSample.comp" />
     <None Include="src\Shaders\TexturePreview.comp" />
   </ItemGroup>
   <ItemGroup>

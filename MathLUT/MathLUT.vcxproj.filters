@@ -193,7 +193,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Functions\TestFunction.mlut">
+    <None Include="src\Functions\Template.mlut">
       <Filter>Source Files\Functions</Filter>
     </None>
     <None Include="src\Shaders\Curve.frag">
@@ -205,7 +205,7 @@
     <None Include="src\Shaders\Grid.frag">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="src\Shaders\TestCompute.comp">
+    <None Include="src\Shaders\LUTSample.comp">
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="src\Shaders\TexturePreview.comp">

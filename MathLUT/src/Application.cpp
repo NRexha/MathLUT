@@ -231,7 +231,7 @@ void Application::SetupDockingLayout(ImGuiID dockspaceID)
     ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
 
     ImGuiID leftNodeID, graphNodeID;
-    ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Right, 0.50f, &graphNodeID, &leftNodeID);
+    ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Right, 0.5f, &graphNodeID, &leftNodeID);
 
     ImGuiID editorNodeID, textureNodeID;
     ImGui::DockBuilderSplitNode(leftNodeID, ImGuiDir_Down, 0.2f, &textureNodeID, &editorNodeID);

@@ -1,9 +1,10 @@
-
 #include "Shader.h"
 
 #include <iostream>
 #include <utility>
 #include <vector>
+
+#pragma region Compute Shader Compilation
 
 namespace
 {
@@ -27,12 +28,18 @@ namespace
             glGetShaderInfoLog(shader, logLength, nullptr, log.data());
 
             std::cerr << "Compute shader compilation failed:\n" << log.data() << '\n';
+
             glDeleteShader(shader);
             return 0;
         }
+
         return shader;
     }
 }
+
+#pragma endregion
+
+#pragma region Construction and Destruction
 
 Shader::Shader(const char* computeSource)
 {
@@ -77,6 +84,10 @@ Shader::~Shader()
         glDeleteProgram(programID);
 }
 
+#pragma endregion
+
+#pragma region Move Operations
+
 Shader::Shader(Shader&& other) noexcept : programID(std::exchange(other.programID, 0))
 {
 }
@@ -94,6 +105,10 @@ Shader& Shader::operator=(Shader&& other) noexcept
     return *this;
 }
 
+#pragma endregion
+
+#pragma region Program Access
+
 void Shader::Use() const
 {
     if (programID != 0)
@@ -109,3 +124,5 @@ bool Shader::IsValid() const
 {
     return programID != 0;
 }
+
+#pragma endregion

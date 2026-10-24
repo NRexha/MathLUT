@@ -27,9 +27,9 @@ bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph, 
 
     std::string functionSource;
 
-    if (!ShaderSource::LoadFromFile("src/Functions/TestFunction.mlut", functionSource))
+    if (!ShaderSource::LoadFromFile("src/Functions/Template.mlut", functionSource))
     {
-        std::cerr << "Failed to load test function.\n";
+        std::cerr << "Failed to load template function.\n";
         return false;
     }
 
@@ -158,8 +158,6 @@ void FunctionEditorPanel::UpdateFunction()
         lastEditTime = now;
     }
 
-#pragma region Debounced Compilation
-
     if (pendingSource != lastAttemptedSource && now - lastEditTime >= std::chrono::milliseconds(250))
     {
         lastAttemptedSource = pendingSource;
@@ -175,10 +173,6 @@ void FunctionEditorPanel::UpdateFunction()
         }
     }
 
-#pragma endregion
-
-#pragma region Animated Preview
-
     if (currentSource != activeSource || activeSource.empty() || !lutGenerator->UsesTime(activeSource))
         return;
 
@@ -193,8 +187,6 @@ void FunctionEditorPanel::UpdateFunction()
         graphView->SetSamples(updatedSamples);
         lastPreviewUpdate = now;
     }
-
-#pragma endregion
 }
 
 #pragma endregion
