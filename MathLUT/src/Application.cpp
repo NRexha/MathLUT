@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include <iostream>
+#include <vector>
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -47,6 +48,9 @@ bool Application::Initialize()
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << '\n';
 
     if (!functionEditorPanel.Initialize(lutGenerator, graphView, codeFont))
+        return false;
+
+    if (!texturePreviewPanel.Initialize(lutGenerator, functionEditorPanel))
         return false;
 
     return true;
@@ -158,28 +162,13 @@ void Application::RunLoop()
 
 void Application::RenderUI()
 {
-    ImGuiID dockspaceID = ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+    const ImGuiID dockspaceID = ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
-    static bool layoutInitialized = false;
-
-    if (!layoutInitialized)
-    {
-        ImGui::DockBuilderRemoveNode(dockspaceID);
-        ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoWindowMenuButton);
-        ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
-
-        ImGuiID editorNodeID, graphNodeID;
-        ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Left, 0.5f, &editorNodeID, &graphNodeID);
-
-        ImGui::DockBuilderDockWindow("Function Editor", editorNodeID);
-        ImGui::DockBuilderDockWindow("Graph", graphNodeID);
-
-        ImGui::DockBuilderFinish(dockspaceID);
-        layoutInitialized = true;
-    }
+    SetupDockingLayout(dockspaceID);
 
     functionEditorPanel.Render();
     RenderGraphPanel();
+    texturePreviewPanel.Render();
 }
 
 void Application::RenderGraphPanel()
@@ -226,6 +215,36 @@ void Application::RenderGraphPanel()
     ImGui::End();
 }
 
+
+
+#pragma endregion
+
+#pragma region Docking Layout
+
+void Application::SetupDockingLayout(ImGuiID dockspaceID)
+{
+    if (dockingLayoutInitialized)
+        return;
+
+
+    ImGui::DockBuilderRemoveNode(dockspaceID);
+    ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoWindowMenuButton);
+    ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
+
+    ImGuiID leftNodeID, graphNodeID;
+    ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Right, 0.50f, &graphNodeID, &leftNodeID);
+
+    ImGuiID editorNodeID, textureNodeID;
+    ImGui::DockBuilderSplitNode(leftNodeID, ImGuiDir_Down, 0.2f, &textureNodeID, &editorNodeID);
+
+    ImGui::DockBuilderDockWindow("Function Editor", editorNodeID);
+    ImGui::DockBuilderDockWindow("Texture Preview", textureNodeID);
+    ImGui::DockBuilderDockWindow("Graph", graphNodeID);
+
+    ImGui::DockBuilderFinish(dockspaceID);
+    dockingLayoutInitialized = true;
+}
+
 #pragma endregion
 
 #pragma region Shutdown
@@ -246,6 +265,8 @@ void Application::Shutdown()
 
     if (graphInitialized)
         graphView.Shutdown();
+
+    texturePreviewPanel.Shutdown();
 
     if (window)
     {

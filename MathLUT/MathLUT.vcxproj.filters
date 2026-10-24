@@ -123,6 +123,9 @@
     <ClCompile Include="src\UI\MathLUTStyle.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\TexturePreviewPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Shader.h">
@@ -176,6 +179,12 @@
     <ClInclude Include="src\UI\MathLUTStyle.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="src\UI\TexturePreviewPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\stb\stb_image_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Functions\TestFunction.mlut">
@@ -193,6 +202,7 @@
     <None Include="src\Shaders\TestCompute.comp">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="src\Shaders\TexturePreview.comp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="src\Fonts\JetBrainsMono-Regular.ttf">

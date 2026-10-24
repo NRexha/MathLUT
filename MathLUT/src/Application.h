@@ -2,10 +2,12 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 #include "Graph/GraphView.h"
 #include "LUT/LUTGenerator.h"
 #include "UI/FunctionEditorPanel.h"
+#include "UI/TexturePreviewPanel.h"
 #include "imgui_internal.h"
 
 class Application
@@ -24,13 +26,14 @@ private:
     void RenderUI();
     void RenderGraphPanel();
 
-    void SetupDockingLayout();
+    void SetupDockingLayout(ImGuiID dockspaceID);
     bool dockingLayoutInitialized = false;
 
     GLFWwindow* window = nullptr;
     GraphView graphView;
     LUTGenerator lutGenerator;
     FunctionEditorPanel functionEditorPanel;
+    TexturePreviewPanel texturePreviewPanel;
 
     bool glfwInitialized = false;
     bool imguiContextCreated = false;

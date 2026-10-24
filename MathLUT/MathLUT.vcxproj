@@ -111,7 +111,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\ImGuiColorTextEdit</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\ImGuiColorTextEdit;$(SolutionDir)Dependencies\stb;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +132,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\ImGuiColorTextEdit</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\ImGuiColorTextEdit;$(SolutionDir)Dependencies\stb;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,8 +167,10 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\UI\FunctionEditorPanel.cpp" />
     <ClCompile Include="src\UI\MathLUTStyle.cpp" />
+    <ClCompile Include="src\UI\TexturePreviewPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Dependencies\stb\stb_image_write.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Core\Shader.h" />
     <ClInclude Include="src\Core\ShaderSource.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="src\LUT\LUTSample.h" />
     <ClInclude Include="src\UI\FunctionEditorPanel.h" />
     <ClInclude Include="src\UI\MathLUTStyle.h" />
+    <ClInclude Include="src\UI\TexturePreviewPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Functions\TestFunction.mlut" />
@@ -193,6 +196,7 @@
     <None Include="src\Shaders\Graph.vert" />
     <None Include="src\Shaders\Grid.frag" />
     <None Include="src\Shaders\TestCompute.comp" />
+    <None Include="src\Shaders\TexturePreview.comp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="src\Fonts\JetBrainsMono-Regular.ttf" />

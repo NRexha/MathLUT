@@ -13,6 +13,7 @@ public:
     //initialization and UI
     bool Initialize(LUTGenerator& lutGenerator, GraphView& graphView, ImFont* codeFont);
     void Render();
+    const std::string& GetActiveSource() const { return activeSource; }
 
 private:
     void UpdateFunction();

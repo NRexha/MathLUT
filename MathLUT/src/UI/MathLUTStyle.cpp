@@ -1,4 +1,3 @@
-
 #include "MathLUTStyle.h"
 #include "imgui.h"
 
