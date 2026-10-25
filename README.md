@@ -50,6 +50,11 @@ Compilation feedback is displayed in the console, helping you identify errors wh
 | `E` | 2.71828182845904523536 |
 | `_Time` | Elapsed time |
 
+## Example use case
+In this Unreal Engine material, numerous trigonometric operations (`sin`, `cos`, `atan2`, etc.) were used throughout the graph, although only a `sin` and `cos` are shown in this screenshot for practice purpose. Their cumulative cost risked creating a GPU bottleneck. By baking some of these calculations into a small 32 × 4 px LUT texture, we could replace runtime math with texture samples, shifting part of the workload to texture lookups and potentially reducing pressure on shader execution resources.
+
+<img width="1687" height="744" alt="Usage" src="https://github.com/user-attachments/assets/ce1f82be-477a-404f-aa66-4ccd6fb70187" />
+
 ## Dependencies
 
 - C++ 20
