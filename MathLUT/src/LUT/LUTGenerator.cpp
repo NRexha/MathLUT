@@ -6,7 +6,6 @@
 #include "../Language/BuiltinRegistry.h"
 
 #include <glad/glad.h>
-#include <iostream>
 #include <limits>
 #include <regex>
 
@@ -22,36 +21,53 @@ bool LUTGenerator::UsesTime(const std::string& functionSource) const
 
 #pragma region Sample Generation
 
-bool LUTGenerator::GenerateSamples(const std::string& functionSource, std::vector<LUTSample>& samples, float time)
+bool LUTGenerator::GenerateSamples(const std::string& functionSource, std::vector<LUTSample>& samples, float time, std::string* error)
 {
+    if (error)
+        error->clear();
+
     if (!computeShader || compiledFunctionSource != functionSource)
     {
-        std::string shaderTemplate, generatedSource, error;
+        std::string shaderTemplate, generatedSource, generationError;
 
         if (!ShaderSource::LoadFromFile("src/Shaders/LUTSample.comp", shaderTemplate))
+        {
+            if (error)
+                *error = "Failed to load LUTSample.comp.";
+
             return false;
+        }
 
         FunctionParser parser;
         std::vector<FunctionStatement> statements;
 
-        if (!parser.Parse(functionSource, statements, error))
+        if (!parser.Parse(functionSource, statements, generationError))
         {
-            std::cerr << "Function parsing failed:\n" << error << '\n';
+            if (error)
+                *error = "Function parsing failed:\n" + generationError;
+
             return false;
         }
 
         GLSLGenerator generator;
 
-        if (!generator.Generate(shaderTemplate, statements, generatedSource, error))
+        if (!generator.Generate(shaderTemplate, statements, generatedSource, generationError))
         {
-            std::cerr << "GLSL generation failed:\n" << error << '\n';
+            if (error)
+                *error = "GLSL generation failed:\n" + generationError;
+
             return false;
         }
 
         auto newShader = std::make_unique<Shader>(generatedSource.c_str());
 
         if (!newShader->IsValid())
+        {
+            if (error)
+                *error = newShader->GetError();
+
             return false;
+        }
 
         computeShader = std::move(newShader);
         compiledFunctionSource = functionSource;
@@ -70,7 +86,9 @@ bool LUTGenerator::GenerateSamples(const std::string& functionSource, std::vecto
     const GLint countLocation = glGetUniformLocation(computeShader->GetProgramID(), "sampleCount");
     if (countLocation < 0)
     {
-        std::cerr << "Compute shader is missing the sampleCount uniform.\n";
+        if (error)
+            *error = "Compute shader is missing the sampleCount uniform.";
+
         return false;
     }
 
@@ -104,47 +122,71 @@ bool LUTGenerator::GenerateSamples(const std::string& functionSource, std::vecto
 
 #pragma region Texture Generation
 
-bool LUTGenerator::GenerateTexture(const std::string& functionSource, int width, int height, std::vector<LUTSample>& samples)
+bool LUTGenerator::GenerateTexture(const std::string& functionSource, int width, int height, std::vector<LUTSample>& samples, std::string* error)
 {
+    if (error)
+        error->clear();
+
     if (width <= 0 || height <= 0)
+    {
+        if (error)
+            *error = "Texture dimensions must be greater than zero.";
+
         return false;
+    }
 
     const size_t pixelCount = static_cast<size_t>(width) * static_cast<size_t>(height);
 
     if (pixelCount > static_cast<size_t>(std::numeric_limits<GLsizeiptr>::max()) / sizeof(LUTSample))
     {
-        std::cerr << "Texture dimensions exceed the supported buffer size.\n";
+        if (error)
+            *error = "Texture dimensions exceed the supported buffer size.";
+
         return false;
     }
 
     if (!textureComputeShader || compiledTextureFunctionSource != functionSource)
     {
-        std::string shaderTemplate, generatedSource, error;
+        std::string shaderTemplate, generatedSource, generationError;
 
         if (!ShaderSource::LoadFromFile("src/Shaders/TexturePreview.comp", shaderTemplate))
+        {
+            if (error)
+                *error = "Failed to load TexturePreview.comp.";
+
             return false;
+        }
 
         FunctionParser parser;
         std::vector<FunctionStatement> statements;
 
-        if (!parser.Parse(functionSource, statements, error))
+        if (!parser.Parse(functionSource, statements, generationError))
         {
-            std::cerr << "Function parsing failed:\n" << error << '\n';
+            if (error)
+                *error = "Function parsing failed:\n" + generationError;
+
             return false;
         }
 
         GLSLGenerator generator;
 
-        if (!generator.Generate(shaderTemplate, statements, generatedSource, error))
+        if (!generator.Generate(shaderTemplate, statements, generatedSource, generationError))
         {
-            std::cerr << "GLSL generation failed:\n" << error << '\n';
+            if (error)
+                *error = "GLSL generation failed:\n" + generationError;
+
             return false;
         }
 
         auto newShader = std::make_unique<Shader>(generatedSource.c_str());
 
         if (!newShader->IsValid())
+        {
+            if (error)
+                *error = newShader->GetError();
+
             return false;
+        }
 
         textureComputeShader = std::move(newShader);
         compiledTextureFunctionSource = functionSource;
@@ -164,7 +206,9 @@ bool LUTGenerator::GenerateTexture(const std::string& functionSource, int width,
 
     if (widthLocation < 0 || heightLocation < 0)
     {
-        std::cerr << "Texture compute shader is missing a resolution uniform.\n";
+        if (error)
+            *error = "Texture compute shader is missing a resolution uniform.";
+
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         return false;

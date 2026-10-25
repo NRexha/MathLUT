@@ -3,6 +3,7 @@
 #include "../LUT/LUTGenerator.h"
 #include "../Graph/GraphView.h"
 #include "TextEditor.h"
+#include "ConsolePanel.h"
 
 #include <chrono>
 #include <string>
@@ -11,7 +12,7 @@ class FunctionEditorPanel
 {
 public:
     //initialization and UI
-    bool Initialize(LUTGenerator& lutGenerator, GraphView& graphView, ImFont* codeFont);
+    bool Initialize(LUTGenerator& lutGenerator, GraphView& graphView, ImFont* codeFont, ConsolePanel& consolePanel);
     void Render();
     const std::string& GetActiveSource() const { return activeSource; }
 
@@ -21,6 +22,7 @@ private:
     TextEditor editor;
     LUTGenerator* lutGenerator = nullptr;
     GraphView* graphView = nullptr;
+    ConsolePanel* consolePanel = nullptr;
     ImFont* codeFont = nullptr;
 
     std::string pendingSource;

@@ -1,6 +1,7 @@
 #include "TexturePreviewPanel.h"
 
 #include "FunctionEditorPanel.h"
+#include "ConsolePanel.h"
 #include "../LUT/TextureExporter.h"
 #include "imgui.h"
 
@@ -9,10 +10,11 @@
 
 #pragma region Initialization
 
-bool TexturePreviewPanel::Initialize(LUTGenerator& lutGenerator, FunctionEditorPanel& functionEditorPanel)
+bool TexturePreviewPanel::Initialize(LUTGenerator& lutGenerator, FunctionEditorPanel& functionEditorPanel, ConsolePanel& consolePanel)
 {
     this->lutGenerator = &lutGenerator;
     this->functionEditorPanel = &functionEditorPanel;
+    this->consolePanel = &consolePanel;
 
     return true;
 }
@@ -70,15 +72,22 @@ void TexturePreviewPanel::Render()
 
     const std::string& source = functionEditorPanel->GetActiveSource();
 
-    if (!source.empty() &&
-        (source != lastTextureSource ||
-            textureWidth != lastTextureWidth ||
-            textureHeight != lastTextureHeight ||
-            resolutionChanged))
-    {
-        std::vector<LUTSample> samples;
+    const bool needsGeneration = !source.empty() &&
+        (source != lastAttemptedSource ||
+            textureWidth != lastAttemptedWidth ||
+            textureHeight != lastAttemptedHeight ||
+            resolutionChanged);
 
-        if (lutGenerator->GenerateTexture(source, textureWidth, textureHeight, samples))
+    if (needsGeneration)
+    {
+        lastAttemptedSource = source;
+        lastAttemptedWidth = textureWidth;
+        lastAttemptedHeight = textureHeight;
+
+        std::vector<LUTSample> samples;
+        std::string error;
+
+        if (lutGenerator->GenerateTexture(source, textureWidth, textureHeight, samples, &error))
         {
             if (previewTexture == 0)
                 glGenTextures(1, &previewTexture);
@@ -100,6 +109,12 @@ void TexturePreviewPanel::Render()
             lastTextureSource = source;
             lastTextureWidth = textureWidth;
             lastTextureHeight = textureHeight;
+
+            consolePanel->Log(ConsoleMessageType::Success, "Texture generated successfully.");
+        }
+        else
+        {
+            consolePanel->Log(ConsoleMessageType::Error, error);
         }
     }
 
@@ -121,15 +136,19 @@ void TexturePreviewPanel::Render()
     if (previewTexture != 0)
     {
         const ImVec2 available = ImGui::GetContentRegionAvail();
-        const float aspectRatio = static_cast<float>(textureWidth) / textureHeight;
 
-        ImVec2 imageSize = available;
-        if (imageSize.x / imageSize.y > aspectRatio)
-            imageSize.x = imageSize.y * aspectRatio;
-        else
-            imageSize.y = imageSize.x / aspectRatio;
+        if (available.x > 0.0f && available.y > 0.0f && textureHeight > 0)
+        {
+            const float aspectRatio = static_cast<float>(textureWidth) / textureHeight;
 
-        ImGui::Image((ImTextureID)(intptr_t)previewTexture, imageSize, ImVec2(0, 1), ImVec2(1, 0));
+            ImVec2 imageSize = available;
+            if (imageSize.x / imageSize.y > aspectRatio)
+                imageSize.x = imageSize.y * aspectRatio;
+            else
+                imageSize.y = imageSize.x / aspectRatio;
+
+            ImGui::Image((ImTextureID)(intptr_t)previewTexture, imageSize, ImVec2(0, 1), ImVec2(1, 0));
+        }
     }
     else
     {
@@ -156,8 +175,13 @@ void TexturePreviewPanel::Shutdown()
     lastTextureWidth = 0;
     lastTextureHeight = 0;
 
+    lastAttemptedSource.clear();
+    lastAttemptedWidth = 0;
+    lastAttemptedHeight = 0;
+
     lutGenerator = nullptr;
     functionEditorPanel = nullptr;
+    consolePanel = nullptr;
 }
 
 #pragma endregion

@@ -135,10 +135,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends;$(SolutionDir)Dependencies\ImGuiColorTextEdit;$(SolutionDir)Dependencies\stb;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2026</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;</AdditionalDependencies>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -166,6 +167,7 @@
     <ClCompile Include="src\LUT\LUTGenerator.cpp" />
     <ClCompile Include="src\LUT\TextureExporter.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\UI\ConsolePanel.cpp" />
     <ClCompile Include="src\UI\FunctionEditorPanel.cpp" />
     <ClCompile Include="src\UI\MathLUTStyle.cpp" />
     <ClCompile Include="src\UI\TexturePreviewPanel.cpp" />
@@ -188,6 +190,7 @@
     <ClInclude Include="src\LUT\LUTGenerator.h" />
     <ClInclude Include="src\LUT\LUTSample.h" />
     <ClInclude Include="src\LUT\TextureExporter.h" />
+    <ClInclude Include="src\UI\ConsolePanel.h" />
     <ClInclude Include="src\UI\FunctionEditorPanel.h" />
     <ClInclude Include="src\UI\MathLUTStyle.h" />
     <ClInclude Include="src\UI\TexturePreviewPanel.h" />

@@ -1,6 +1,5 @@
 #include "Shader.h"
 
-#include <iostream>
 #include <utility>
 #include <vector>
 
@@ -8,7 +7,7 @@
 
 namespace
 {
-    GLuint CompileComputeShader(const char* source)
+    GLuint CompileComputeShader(const char* source, std::string& errorMessage)
     {
         GLuint shader = glCreateShader(GL_COMPUTE_SHADER);
 
@@ -24,10 +23,9 @@ namespace
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
 
             std::vector<char> log(logLength > 0 ? logLength : 1);
-
             glGetShaderInfoLog(shader, logLength, nullptr, log.data());
 
-            std::cerr << "Compute shader compilation failed:\n" << log.data() << '\n';
+            errorMessage = "Compute shader compilation failed:\n" + std::string(log.data());
 
             glDeleteShader(shader);
             return 0;
@@ -43,7 +41,7 @@ namespace
 
 Shader::Shader(const char* computeSource)
 {
-    const GLuint shader = CompileComputeShader(computeSource);
+    const GLuint shader = CompileComputeShader(computeSource, errorMessage);
 
     if (shader == 0)
         return;
@@ -62,16 +60,14 @@ Shader::Shader(const char* computeSource)
         glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &logLength);
 
         std::vector<char> log(logLength > 0 ? logLength : 1);
-
         glGetProgramInfoLog(programID, logLength, nullptr, log.data());
 
-        std::cerr << "Compute program linking failed:\n" << log.data() << '\n';
+        errorMessage = "Compute program linking failed:\n" + std::string(log.data());
 
         glDeleteProgram(programID);
         programID = 0;
     }
 
-    //detach only if the program still exists
     if (programID != 0)
         glDetachShader(programID, shader);
 
@@ -88,7 +84,9 @@ Shader::~Shader()
 
 #pragma region Move Operations
 
-Shader::Shader(Shader&& other) noexcept : programID(std::exchange(other.programID, 0))
+Shader::Shader(Shader&& other) noexcept
+    : programID(std::exchange(other.programID, 0)),
+    errorMessage(std::move(other.errorMessage))
 {
 }
 
@@ -101,6 +99,7 @@ Shader& Shader::operator=(Shader&& other) noexcept
         glDeleteProgram(programID);
 
     programID = std::exchange(other.programID, 0);
+    errorMessage = std::move(other.errorMessage);
 
     return *this;
 }
@@ -123,6 +122,11 @@ GLuint Shader::GetProgramID() const
 bool Shader::IsValid() const
 {
     return programID != 0;
+}
+
+const std::string& Shader::GetError() const
+{
+    return errorMessage;
 }
 
 #pragma endregion

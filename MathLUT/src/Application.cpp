@@ -46,10 +46,10 @@ bool Application::Initialize()
     glfwSwapInterval(1);
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << '\n';
 
-    if (!functionEditorPanel.Initialize(lutGenerator, graphView, codeFont))
+    if (!functionEditorPanel.Initialize(lutGenerator, graphView, codeFont, consolePanel))
         return false;
 
-    if (!texturePreviewPanel.Initialize(lutGenerator, functionEditorPanel))
+    if (!texturePreviewPanel.Initialize(lutGenerator, functionEditorPanel, consolePanel))
         return false;
 
     return true;
@@ -168,6 +168,13 @@ void Application::RenderUI()
     functionEditorPanel.Render();
     RenderGraphPanel();
     texturePreviewPanel.Render();
+    consolePanel.Render();
+
+    if (!initialPanelFocusSet)
+    {
+        ImGui::SetWindowFocus("Texture Preview");
+        initialPanelFocusSet = true;
+    }
 }
 
 void Application::RenderGraphPanel()
@@ -225,6 +232,12 @@ void Application::SetupDockingLayout(ImGuiID dockspaceID)
     if (dockingLayoutInitialized)
         return;
 
+    ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(dockspaceID);
+    if (dockNode && dockNode->IsSplitNode())
+    {
+        dockingLayoutInitialized = true;
+        return;
+    }
 
     ImGui::DockBuilderRemoveNode(dockspaceID);
     ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoWindowMenuButton);
@@ -237,8 +250,10 @@ void Application::SetupDockingLayout(ImGuiID dockspaceID)
     ImGui::DockBuilderSplitNode(leftNodeID, ImGuiDir_Down, 0.2f, &textureNodeID, &editorNodeID);
 
     ImGui::DockBuilderDockWindow("Function Editor", editorNodeID);
+    ImGui::DockBuilderDockWindow("Console", textureNodeID);
     ImGui::DockBuilderDockWindow("Texture Preview", textureNodeID);
     ImGui::DockBuilderDockWindow("Graph", graphNodeID);
+
 
     ImGui::DockBuilderFinish(dockspaceID);
     dockingLayoutInitialized = true;

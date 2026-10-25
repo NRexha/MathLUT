@@ -129,6 +129,9 @@
     <ClCompile Include="src\LUT\TextureExporter.cpp">
       <Filter>Source Files\LUT</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\ConsolePanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Shader.h">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="src\LUT\TextureExporter.h">
       <Filter>Header Files\LUT</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\ConsolePanel.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

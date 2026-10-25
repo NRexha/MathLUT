@@ -19,11 +19,12 @@ namespace
 
 #pragma region Initialization
 
-bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph, ImFont* font)
+bool FunctionEditorPanel::Initialize(LUTGenerator& generator, GraphView& graph, ImFont* font, ConsolePanel& consolePanel)
 {
     lutGenerator = &generator;
     graphView = &graph;
     codeFont = font;
+    this->consolePanel = &consolePanel;
 
     std::string functionSource;
 
@@ -164,12 +165,18 @@ void FunctionEditorPanel::UpdateFunction()
 
         const float time = std::chrono::duration<float>(now - startTime).count();
         std::vector<LUTSample> updatedSamples;
+        std::string error;
 
-        if (lutGenerator->GenerateSamples(pendingSource, updatedSamples, time))
+        if (lutGenerator->GenerateSamples(pendingSource, updatedSamples, time, &error))
         {
             activeSource = pendingSource;
             graphView->SetSamples(updatedSamples);
             lastPreviewUpdate = now;
+            consolePanel->Log(ConsoleMessageType::Success, "Function compiled successfully.");
+        }
+        else
+        {
+            consolePanel->Log(ConsoleMessageType::Error, error);
         }
     }
 

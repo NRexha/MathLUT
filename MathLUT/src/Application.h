@@ -6,6 +6,7 @@
 
 #include "Graph/GraphView.h"
 #include "LUT/LUTGenerator.h"
+#include "UI/ConsolePanel.h"
 #include "UI/FunctionEditorPanel.h"
 #include "UI/TexturePreviewPanel.h"
 #include "imgui_internal.h"
@@ -27,11 +28,13 @@ private:
     void RenderGraphPanel();
 
     void SetupDockingLayout(ImGuiID dockspaceID);
+    bool initialPanelFocusSet = false;
     bool dockingLayoutInitialized = false;
 
     GLFWwindow* window = nullptr;
     GraphView graphView;
     LUTGenerator lutGenerator;
+    ConsolePanel consolePanel;
     FunctionEditorPanel functionEditorPanel;
     TexturePreviewPanel texturePreviewPanel;
 
