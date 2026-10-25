@@ -2,7 +2,7 @@
 
 MathLUT is a lightweight desktop application designed to make the creation of lookup tables (LUTs) more intuitive. You can write GLSL-like functions directly in the built-in code editor, inspect their behavior through curve graphs, preview the resulting texture, and export it as a PNG. 
 
->**Note:** The tool was developed as a three-day challenge. It was my first time building a tool from scratch without relying on an application framework. The project was a great opportunity to explore C++, OpenGL compute shaders.
+>**Note:** The tool was developed as a three-day challenge. It was my first time building a tool from scratch without relying on an application framework. The project was a great opportunity to explore C++ and OpenGL compute shaders.
 
 <img width="1284" height="767" alt="MathLUT" src="https://github.com/user-attachments/assets/6caa176d-369e-4b0a-a471-bfd9956ae954" />
 
