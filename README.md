@@ -26,6 +26,12 @@ b = 1.0 - x;
 a = 1.0;
 ```
 
+You can also assign multiple channels at once using vector types:
+
+```glsl
+rgb = vec3(x, x * x, 1.0 - x);
+a = 1.0;
+```
 Each assignment defines an output channel. In this example, red follows the input, green follows its square, blue is inverted, and alpha remains fully opaque.
 
 You can combine built-in variables, mathematical constants, and supported GLSL functions to create more complex transformations. There's also autocomplete!
