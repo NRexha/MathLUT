@@ -31,6 +31,9 @@ Each assignment defines an output channel. In this example, red follows the inpu
 You can combine built-in variables, mathematical constants, and supported GLSL functions to create more complex transformations. There's also autocomplete!
 Compilation feedback is displayed in the console, helping you identify errors while editing.
 
+<img width="1284" height="767" alt="MathLUT_Func" src="https://github.com/user-attachments/assets/45650c11-ced7-4e70-916e-bf3cc9d537cc" />
+
+
 ## Built-in variables
 
 | Name | Description |
@@ -41,15 +44,17 @@ Compilation feedback is displayed in the console, helping you identify errors wh
 | `E` | 2.71828182845904523536 |
 | `_Time` | Elapsed time |
 
-## Built with
+## Dependencies
 
-- C++
+- C++ 20
 - OpenGL 4.3
 - [GLAD](https://github.com/dav1dde/glad)
 - [Dear ImGui — Docking](https://github.com/ocornut/imgui/tree/docking)
 - [ImGuiColorTextEdit](https://github.com/goossens/ImGuiColorTextEdit)
 - [GLFW](https://www.glfw.org/)
+- [stb_image_write](https://github.com/nothings/stb)
+- [JetBrains Mono Regular](https://www.jetbrains.com/lp/mono/)
 
 ## License
 
-See the [LICENSE](LICENSE) file for licensing information.
+Released under <a href="/LICENSE">MIT</a> by <a href="https://github.com/NRexha">@NRexha</a>.
