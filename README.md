@@ -49,6 +49,9 @@ Compilation feedback is displayed in the console, helping you identify errors wh
 | `TAU` | 6.28318530717958647692 |
 | `E` | 2.71828182845904523536 |
 | `_Time` | Elapsed time |
+| `r`, `g`, `b`, `a` | Red, green, blue, and alpha output channels |
+| `rgb` | RGB output vector (`vec3`) |
+| `rgba` | RGBA output vector (`vec4`) |
 
 ## Example use case
 In this Unreal Engine material, numerous trigonometric operations (`sin`, `cos`, `atan2`, etc.) were used throughout the graph, although only a `sin` and `cos` are shown in this screenshot for practice purpose. Their cumulative cost risked creating a GPU bottleneck. By baking some of these calculations into a small 32 × 4 px LUT texture, we could replace runtime math with texture samples, shifting part of the workload to texture lookups and potentially reducing pressure on shader execution resources.
