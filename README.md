@@ -63,11 +63,10 @@ In this Unreal Engine material, numerous trigonometric operations (`sin`, `cos`,
 - C++ 20
 - OpenGL 4.3
 - [GLAD](https://github.com/dav1dde/glad)
+- [GLFW](https://www.glfw.org/)
 - [Dear ImGui — Docking](https://github.com/ocornut/imgui/tree/docking)
 - [ImGuiColorTextEdit](https://github.com/goossens/ImGuiColorTextEdit)
-- [GLFW](https://www.glfw.org/)
 - [stb_image_write](https://github.com/nothings/stb)
-- [JetBrains Mono Regular](https://www.jetbrains.com/lp/mono/)
 
 ## License
 
